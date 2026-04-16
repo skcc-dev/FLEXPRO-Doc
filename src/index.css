@@ -1,13 +1,14 @@
+@import "tailwindcss";
+
 @font-face {
   font-family: 'Cairo Local';
-  src: url('./assets/fonts/Cairo-Regular.ttf') format('truetype');
+  src: url('/src/assets/fonts/Cairo-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-@import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -20,9 +21,9 @@
     scroll-behavior: smooth;
   }
   
-  [dir="rtl"] {
-    --font-sans: var(--font-arabic);
-    font-family: var(--font-arabic);
+  [dir="rtl"], [dir="rtl"] * {
+    --font-sans: var(--font-arabic) !important;
+    font-family: var(--font-arabic) !important;
   }
 
   /* Markdown Table Styles */
