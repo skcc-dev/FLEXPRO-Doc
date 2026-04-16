@@ -31,6 +31,19 @@ import { SRS_CONTENT_AR } from './content/srs_ar';
 import { cn } from './lib/utils';
 import TechnicalBlueprint from './components/TechnicalBlueprint';
 
+const downloadFile = (filename: string, content: string) => {
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+
 type ViewMode = 'document' | 'blueprint';
 type Language = 'en' | 'ar';
 
@@ -83,7 +96,45 @@ export default function App() {
     item.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleDownloadMarkdown = () => {
+    const filename = `FLEXPro_ERP_SRS_${lang.toUpperCase()}.md`;
+    downloadFile(filename, content);
+  };
+
+  const handleDownloadPrompt = () => {
+    const prompt = `
+# FLEXPro ERP - System Architecture & Build Prompt
+
+You are a Senior Enterprise Software Architect and Lead Developer. Your task is to architect and build a professional, enterprise-grade ERP system called **FLEXPro ERP** based on the provided Software Requirements Specification (SRS).
+
+## 🏗 System Architecture Guidelines
+1. **Architecture Style**: Microservices-inspired Monolith (Modular Monolith) with clear separation of concerns.
+2. **Design Patterns**: Repository Pattern, Service Layer, Controller Pattern, and Factory Pattern.
+3. **Scalability**: Multi-branch support with branch-level data isolation (RLS or dedicated IDs).
+4. **Security**: MFA, AES-256 encryption, and comprehensive RBAC.
+
+## 🛠 Technology Stack
+- **Frontend**: React.js 18+, TypeScript, Tailwind CSS, Lucide React, Framer Motion.
+- **Backend**: Node.js, Express.js, TypeScript.
+- **Database**: PostgreSQL with Prisma.
+- **Caching**: Redis and WebSockets for real-time updates.
+
+## 📄 Reference Document (SRS)
+${content}
+
+## 🎯 Implementation Goals
+1. Setup a clean monorepo structure.
+2. Implement Sales/POS, Inventory, Finance, and CRM modules.
+3. Ensure "Clean Enterprise" UI/UX with responsive design and dashboard widgets.
+
+Please start by outlining the project structure and database schema.
+    `.trim();
+    downloadFile('FLEXPro_Build_Prompt.md', prompt);
+  };
+
   const scrollToSection = (id: string) => {
+    // ... rest of scroll logic
+
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -138,20 +189,32 @@ export default function App() {
               </button>
             </div>
             <div className="hidden sm:flex items-center gap-2">
-              <button className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition-all hover:bg-slate-50 hover:text-slate-900">
+              <button 
+                onClick={handleDownloadMarkdown}
+                className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition-all hover:bg-slate-50 hover:text-slate-900"
+              >
                 <Printer size={16} />
-                <span className="hidden md:inline">{isRtl ? 'طباعة PDF' : 'Print PDF'}</span>
+                <span className="hidden md:inline">{isRtl ? 'تحميل MD' : 'Download MD'}</span>
               </button>
-              <button className="flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-md shadow-indigo-100 transition-all hover:bg-indigo-700 hover:shadow-lg">
+              <button 
+                onClick={handleDownloadPrompt}
+                className="flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-md shadow-indigo-100 transition-all hover:bg-indigo-700 hover:shadow-lg"
+              >
                 <Download size={16} />
-                <span className="hidden md:inline">{isRtl ? 'تصدير Word' : 'Export Word'}</span>
+                <span className="hidden md:inline">{isRtl ? 'تحميل البرومبت' : 'Download Prompt'}</span>
               </button>
             </div>
             <div className="sm:hidden flex gap-1">
-              <button className="p-2 text-slate-600 hover:text-indigo-600">
+              <button 
+                onClick={handleDownloadMarkdown}
+                className="p-2 text-slate-600 hover:text-indigo-600"
+              >
                 <Printer size={18} />
               </button>
-              <button className="p-2 text-indigo-600">
+              <button 
+                onClick={handleDownloadPrompt}
+                className="p-2 text-indigo-600"
+              >
                 <Download size={18} />
               </button>
             </div>
